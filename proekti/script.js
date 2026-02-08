@@ -1,10 +1,11 @@
 const letters = ["A", "S", "D", "F", "J", "K", "L"];
 
+// ელემენტების წამოღბა
 const letterDiv = document.getElementById("letter");
 const scoreDiv = document.getElementById("score");
 const timerDiv = document.getElementById("timer");
 const startBtn = document.getElementById("start");
-
+// თამაშის ცვლადები
 let score = 0;
 let timeLeft = 30;
 let currentLetter = "";
@@ -12,11 +13,11 @@ let gameActive = false;
 let timerInterval;
 let hideTimeout;
 let guessed = false;
-
+// შემთხვევითი ასოს არჩევა
 function getRandomLetter() {
     return letters[Math.floor(Math.random() * letters.length)];
 }
-
+// ასოს გამოჩენა ეკრანზე
 function showLetter() {
     guessed = false;
     currentLetter = getRandomLetter();
@@ -30,7 +31,7 @@ function showLetter() {
         letterDiv.textContent = "";
     }, 1000);
 }
-
+// თამაშის დაწყება
 function startGame() {
     score = 0;
     timeLeft = 30;
@@ -41,7 +42,7 @@ function startGame() {
     letterDiv.textContent = "";
 
     showLetter();
-
+// ტაიმერის მუშაობა
     timerInterval = setInterval(() => {
         timeLeft--;
         timerDiv.textContent = `Time: ${timeLeft}s`;
@@ -51,7 +52,7 @@ function startGame() {
         }
     }, 1000);
 }
-
+// თმაშის დსრულება
 function endGame(win) {
     gameActive = false;
     clearInterval(timerInterval);
@@ -63,7 +64,7 @@ function endGame(win) {
         letterDiv.textContent = "თქვენ ვერ გამოიცანით ❌";
     }
 }
-
+// კლავიატურის დაჭერის შემოწმება
 document.addEventListener("keydown", (e) => {
     if (!gameActive) return;
 
@@ -75,5 +76,5 @@ document.addEventListener("keydown", (e) => {
         showLetter();
     }
 });
-
+// სტარტ ღილაკი
 startBtn.addEventListener("click", startGame);
