@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Wishlist</title>
+  <link rel="stylesheet" href="12.css">
+</head>
+<body>
+  <div class="container">
+    <h1> ჩემი Wishlist</h1>
+
+    <div class="input-area">
+      <input type="text" id="itemInput" placeholder="ჩაწერე ნივთი...">
+      <button id="addBtn">დამატება</button>
+    </div>
+
+    <ul id="wishlist"></ul>
+
+    <button id="clearBtn" class="clear">ყველას წაშლა</button>
+
+    <h2>Event Bubbling / Capturing დემო</h2>
+    <div id="outer" class="outer">
+      Outer div
+      <div id="inner" class="inner">Inner div (დააწკაპე აქ)</div>
+    </div>
+
+    <label><input type="checkbox" id="stopProp"> Stop propagation</label>
+    <button id="clearLog">ლოგის გასუფთავება</button>
+    <div id="log" class="log"></div>
+  </div>
+
+  <script src="12.js"></script>
+</body>
+</html>

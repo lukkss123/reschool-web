@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore - მთავარი</title>
+    <link rel="stylesheet" href="zapxuli2.css">
+</head>
+<body>
+
+<header>
+    <h1>TechStore</h1>
+    <input type="text" id="search" placeholder="პროდუქტის ძიება...">
+</header>
+
+<aside>
+    <h3>ფილტრები</h3>
+    <div>
+        <h4>კატეგორია</h4>
+        <label><input type="checkbox" class="filter-category" value="Laptop"> ლეპტოპი</label><br>
+        <label><input type="checkbox" class="filter-category" value="Phone"> ტელეფონი</label>
+    </div>
+    <div>
+        <h4>ფასი</h4>
+        <input type="number" id="min-price" placeholder="Min">
+        <input type="number" id="max-price" placeholder="Max">
+    </div>
+    <div>
+        <h4>ბრენდი</h4>
+        <label><input type="checkbox" class="filter-brand" value="Apple"> Apple</label><br>
+        <label><input type="checkbox" class="filter-brand" value="Samsung"> Samsung</label>
+    </div>
+    <div>
+        <h4>დალაგება</h4>
+        <select id="sort">
+            <option value="">---</option>
+            <option value="price-asc">ფასი ↑</option>
+            <option value="price-desc">ფასი ↓</option>
+            <option value="name-asc">სახელი A-Z</option>
+            <option value="name-desc">სახელი Z-A</option>
+        </select>
+    </div>
+</aside>
+
+<main id="product-list"></main>
+
+<script src="zapxuli2.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="amindi.css">
+</head>
+<body>
+    <div class="weather-app-container">
+        <h1>ამინდის სიმულატორი</h1>
+
+        <div class="input-section">
+            <label for="city-select">აირჩიეთ ქალაქი:</label>
+            <select id="city-select">
+                <option value="">-- აირჩიეთ ქალაქი --</option>
+                <option value="თბილისი">თბილისი</option>
+                <option value="ქუთაისი">ქუთაისი</option>
+                <option value="ბათუმი">ბათუმი</option>
+                <option value="რუსთავი">რუსთავი</option>
+                <option value="ზუგდიდი">ზუგდიდი</option>
+            </select>
+            <button id="search-button">ძებნა</button>
+        </div>
+
+        <div id="weather-info" class="weather-info">   
+            <p>გთხოვთ, აირჩიოთ ქალაქი და დააჭიროთ "ძებნა"-ს.</p>
+        </div>
+
+        <div id="loading-message" class="loading-message">
+            ამინდის მონაცემების ძებნა...
+        </div>
+    </div>
+
+    <script src="amindi.js"></script>
+</body>
+</html>

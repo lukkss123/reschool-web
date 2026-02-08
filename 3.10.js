@@ -1,0 +1,181 @@
+<!--
+Instructions: This document contains two separate files. Save them as two files in the same folder:
+1) index.html
+2) app.js
+
+Open index.html in a browser. app.js is referenced from index.html.
+-->
+
+<!-- ===== index.html ===== -->
+<!doctype html>
+<html lang="ka">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Task Manager — Luka (HTML + JS)</title>
+  <style>
+    /* minimal styling kept in HTML as requested */
+    :root{--bg:#0f1724;--accent:#60a5fa;--muted:#94a3b8;--danger:#fb7185;--success:#34d399}
+    *{box-sizing:border-box}
+    body{font-family:Inter,system-ui,Roboto,Arial;background:#071227;color:#e6eef8;margin:0;padding:20px}
+    .container{max-width:980px;margin:0 auto}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:14px;border-radius:10px}
+    input,textarea,select,button{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+    .flex{display:flex;gap:8px}
+    .task-list{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+    .task{padding:10px;border-radius:8px;background:rgba(255,255,255,0.02)}
+    .small{font-size:13px;color:var(--muted)}
+    .hidden{display:none}
+    .pill{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px}
+    .priority-low{color:var(--success)}
+    .priority-medium{color:#f59e0b}
+    .priority-high{color:var(--danger)}
+    .notif{position:fixed;right:18px;bottom:18px;min-width:220px}
+    .notif .item{background:#061226;padding:10px;border-radius:8px;margin-top:8px;border-left:4px solid var(--accent)}
+    .loading-overlay{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:flex;align-items:center;justify-content:center;z-index:40}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Task Manager (HTML + JS)</h1>
+    <section class="card" id="app">
+      <form id="taskForm">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <input id="title" placeholder="Title" required style="flex:2;min-width:180px" />
+          <select id="priority" style="min-width:120px">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+          <input id="dueDate" type="date" style="min-width:160px" />
+        </div>
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+          <textarea id="description" placeholder="Description" style="flex:1;min-height:60px"></textarea>
+        </div>
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+          <button id="addBtn">Add task</button>
+          <button type="button" id="clearBtn">Clear</button>
+          <div class="small" id="formStatus"></div>
+        </div>
+      </form>
+
+      <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+        <select id="filterPriority"><option value="all">All priorities</option><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select>
+        <select id="filterStatus"><option value="all">All statuses</option><option value="pending">Pending</option><option value="done">Done</option></select>
+        <button id="refreshBtn">Refresh</button>
+        <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+          <button id="exportBtn">Export</button>
+          <button id="importBtn">Import</button>
+          <input id="fileInput" type="file" accept="application/json" style="display:none" />
+        </div>
+      </div>
+
+      <div class="task-list" id="taskList"></div>
+    </section>
+
+    <div class="notif" id="notifications"></div>
+  </div>
+
+  <div class="loading-overlay hidden" id="globalLoader"><div style="padding:20px;background:#071227;border-radius:8px">Loading…</div></div>
+
+  <!-- Link to external JS file (save app.js beside this file) -->
+  <script src="app.js"></script>
+</body>
+</html>
+
+
+<!-- ===== app.js ===== -->
+<script>
+// Save the following block into a separate file named `app.js` (remove the <script> wrapper when saving):
+
+/* ---------- Task Manager (app.js) ---------- */
+(function(){
+  const STORAGE_KEY = 'TASKS_V1';
+  const MAX_RETRIES = 3;
+
+  // DOM refs
+  const titleIn = document.getElementById('title');
+  const descIn = document.getElementById('description');
+  const prioIn = document.getElementById('priority');
+  const dueIn = document.getElementById('dueDate');
+  const addBtn = document.getElementById('addBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const taskList = document.getElementById('taskList');
+  const notifications = document.getElementById('notifications');
+  const globalLoader = document.getElementById('globalLoader');
+  const formStatus = document.getElementById('formStatus');
+  const filterPriority = document.getElementById('filterPriority');
+  const filterStatus = document.getElementById('filterStatus');
+  const refreshBtn = document.getElementById('refreshBtn');
+  const exportBtn = document.getElementById('exportBtn');
+  const importBtn = document.getElementById('importBtn');
+  const fileInput = document.getElementById('fileInput');
+
+  let tasks = [];
+
+  function uid(){return Date.now().toString(36) + Math.random().toString(36).slice(2,8)}
+  function nowISO(){return new Date().toISOString()}
+  function showLoader(show=true){globalLoader.classList.toggle('hidden',!show)}
+
+  function notify(msg, {type='info', autoHide=4000, actions=null}={}){
+    const el = document.createElement('div'); el.className='item';
+    el.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div>${escapeHtml(msg)}</div></div>`;
+    if(type==='error') el.style.borderLeftColor='var(--danger)';
+    if(type==='success') el.style.borderLeftColor='var(--success)';
+    if(actions){
+      const area = document.createElement('div'); area.style.marginTop='8px';
+      actions.forEach(a=>{
+        const b = document.createElement('button'); b.textContent = a.label; b.className='ghost'; b.style.marginRight='6px';
+        b.onclick = ()=>{ a.cb(); notifications.removeChild(el); };
+        area.appendChild(b);
+      });
+      el.appendChild(area);
+    }
+    notifications.appendChild(el);
+    if(autoHide>0){setTimeout(()=>{if(notifications.contains(el)) notifications.removeChild(el)},autoHide)}
+  }
+  function escapeHtml(s){return String(s||'').replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]))}
+
+  function saveToLocalStorage(data){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); return {ok:true}; }
+    catch(err){ const isQuota = err && (err.name === 'QuotaExceededError' || err.name === 'NS_ERROR_DOM_QUOTA_REACHED' || /quota/i.test(err.message || '')); return {ok:false, error: err, quota: isQuota}; }
+  }
+  function loadFromLocalStorage(){ try{ const raw = localStorage.getItem(STORAGE_KEY); if(!raw) return []; return JSON.parse(raw);}catch(err){ notify('Failed to read tasks — data may be corrupted', {type:'error'}); console.error(err); return []; } }
+  function trySaveWithFallback(data){ const res = saveToLocalStorage(data); if(res.ok) return true; if(res.quota){ notify('LocalStorage quota exceeded. Export data or clear storage.', {type:'error', autoHide:0, actions:[{label:'Export', cb:()=>exportJSON()},{label:'Clear', cb:()=>{localStorage.clear(); notify('Cleared storage', {type:'success'});}}]}); return false; } notify('Save failed: '+(res.error && res.error.message), {type:'error'}); return false; }
+
+  function simulatedApi(actionFn, {delay=600, failureRate=0.12}={}){ return new Promise((resolve,reject)=>{ setTimeout(()=>{ if(Math.random() < failureRate){ reject(new Error('Simulated network error')); return; } try{ resolve(actionFn()); }catch(e){ reject(e); } }, delay); }); }
+  async function retryOperation(opFn, retries=MAX_RETRIES, backoff=300){ let attempt=0; while(attempt<=retries){ try{ return await opFn(attempt); }catch(err){ attempt++; if(attempt>retries) throw err; await new Promise(res=>setTimeout(res, backoff*attempt)); } } }
+
+  async function createTask(payload){ return retryOperation(()=>simulatedApi(()=>{ const t={id:uid(),title:payload.title,description:payload.description||'',priority:payload.priority||'medium',dueDate:payload.dueDate||null,status:'pending',createdAt:nowISO()}; tasks.unshift(t); trySaveWithFallback(tasks); return t; }, {delay:700})); }
+  async function updateTask(id, patch){ return retryOperation(()=>simulatedApi(()=>{ const idx=tasks.findIndex(t=>t.id===id); if(idx===-1) throw new Error('Not found'); tasks[idx]=Object.assign({},tasks[idx],patch); trySaveWithFallback(tasks); return tasks[idx]; }, {delay:600})); }
+  async function deleteTask(id){ return retryOperation(()=>simulatedApi(()=>{ const idx=tasks.findIndex(t=>t.id===id); if(idx===-1) throw new Error('Not found'); const d=tasks.splice(idx,1)[0]; trySaveWithFallback(tasks); return d; }, {delay:600})); }
+  async function readTasks(){ return retryOperation(()=>simulatedApi(()=>tasks.slice(0), {delay:500})); }
+
+  function renderTasks(list){ taskList.innerHTML=''; if(!list.length){ taskList.innerHTML='<div class="small">No tasks</div>'; return; } list.forEach(t=>{ const el=document.createElement('div'); el.className='task'; el.innerHTML = `\n  <div style="display:flex;justify-content:space-between">\n    <div>\n      <div style="font-weight:600">${escapeHtml(t.title)}</div>\n      <div class="small">${t.description?escapeHtml(t.description):'<i class="small">No description</i>'}</div>\n    </div>\n    <div style="text-align:right">\n      <div class="pill priority-${t.priority}">${escapeHtml(t.priority.toUpperCase())}</div>\n      <div class="small">${t.dueDate?'Due: '+escapeHtml(t.dueDate):''}</div>\n    </div>\n  </div>\n  <div style="margin-top:8px;display:flex;gap:6px">\n    <button data-action="toggle" data-id="${t.id}">${t.status==='done'?'Mark pending':'Mark done'}</button>\n    <button data-action="edit" data-id="${t.id}">Edit</button>\n    <button data-action="delete" data-id="${t.id}">Delete</button>\n  </div>\n`; taskList.appendChild(el); }); }
+
+  function applyFilters(list){ const p=filterPriority.value; const s=filterStatus.value; return list.filter(t=>(p==='all'||t.priority===p)&&(s==='all'||t.status===s)); }
+
+  document.getElementById('taskForm').addEventListener('submit', async (e)=>{ e.preventDefault(); const payload={title:titleIn.value.trim(),description:descIn.value.trim(),priority:prioIn.value,dueDate:dueIn.value||null}; if(!payload.title){ formStatus.textContent='Title required'; return; } addBtn.disabled=true; formStatus.textContent='Adding...'; showLoader(true); try{ await createTask(payload); notify('Created',{type:'success'}); renderTasks(applyFilters(tasks)); e.target.reset(); }catch(err){ notify('Create failed: '+err.message,{type:'error',autoHide:0,actions:[{label:'Retry',cb:()=>document.getElementById('taskForm').dispatchEvent(new Event('submit'))}]}); }finally{ addBtn.disabled=false; formStatus.textContent=''; showLoader(false); } });
+
+  clearBtn.addEventListener('click', ()=>{ document.getElementById('taskForm').reset(); formStatus.textContent=''; });
+
+  document.getElementById('taskList').addEventListener('click', async (e)=>{ const btn=e.target.closest('button'); if(!btn) return; const act=btn.getAttribute('data-action'); const id=btn.getAttribute('data-id'); if(act==='toggle'){ btn.disabled=true; showLoader(true); try{ const t=tasks.find(x=>x.id===id); await updateTask(id,{status:t.status==='done'?'pending':'done'}); renderTasks(applyFilters(tasks)); notify('Updated',{type:'success'}); }catch(err){ notify('Update failed: '+err.message,{type:'error',autoHide:0,actions:[{label:'Retry',cb:()=>btn.click()}]}); }finally{ btn.disabled=false; showLoader(false); } }
+    if(act==='delete'){ if(!confirm('Delete?')) return; btn.disabled=true; showLoader(true); try{ await deleteTask(id); renderTasks(applyFilters(tasks)); notify('Deleted',{type:'success'}); }catch(err){ notify('Delete failed: '+err.message,{type:'error',autoHide:0,actions:[{label:'Retry',cb:()=>btn.click()}]}); }finally{ btn.disabled=false; showLoader(false); } }
+    if(act==='edit'){ const t=tasks.find(x=>x.id===id); if(!t) return notify('Not found',{type:'error'}); const newTitle=prompt('Title',t.title); if(newTitle==null) return; const newDesc=prompt('Description',t.description||''); showLoader(true); try{ await updateTask(id,{title:newTitle.trim(),description:newDesc.trim()}); renderTasks(applyFilters(tasks)); notify('Updated',{type:'success'}); }catch(err){ notify('Update failed: '+err.message,{type:'error',autoHide:0,actions:[{label:'Retry',cb:()=>btn.click()}]}); }finally{ showLoader(false); } }
+  });
+
+  refreshBtn.addEventListener('click', async ()=>{ showLoader(true); try{ await readTasks(); renderTasks(applyFilters(tasks)); notify('Refreshed',{type:'success'}); }catch(err){ notify('Refresh failed: '+err.message,{type:'error',autoHide:0,actions:[{label:'Retry',cb:()=>refreshBtn.click()}]}); }finally{ showLoader(false); } });
+
+  exportBtn.addEventListener('click', ()=>{ try{ const raw=JSON.stringify(tasks,null,2); const blob=new Blob([raw],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='tasks-'+(new Date().toISOString().slice(0,19))+'.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); notify('Export started',{type:'success'}); }catch(err){ notify('Export failed: '+err.message,{type:'error'}); } });
+
+  importBtn.addEventListener('click', ()=>fileInput.click());
+  fileInput.addEventListener('change', ()=>{ const f=fileInput.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ try{ const parsed=JSON.parse(r.result); if(!Array.isArray(parsed)) throw new Error('Invalid'); parsed.forEach(p=>{ if(!p.id) p.id=uid(); if(!p.title) p.title='Imported'; }); tasks = parsed.concat(tasks); trySaveWithFallback(tasks); renderTasks(applyFilters(tasks)); notify('Import done',{type:'success'}); }catch(err){ notify('Import failed: '+err.message,{type:'error'}); } }; r.onerror=()=>notify('Read error',{type:'error'}); r.readAsText(f); fileInput.value=''; });
+
+  // bootstrap
+  (function bootstrap(){ try{ tasks=loadFromLocalStorage(); tasks=tasks.map(t=>Object.assign({id:t.id||uid(),title:t.title||'Untitled',description:t.description||'',priority:t.priority||'medium',dueDate:t.dueDate||null,status:t.status||'pending',createdAt:t.createdAt||nowISO()},t)); renderTasks(applyFilters(tasks)); }catch(err){ console.error(err); tasks=[]; renderTasks(tasks); } })();
+
+  // Expose for debug
+  window._taskApp = {tasks, createTask, updateTask, deleteTask, readTasks};
+})();
+
+</script>

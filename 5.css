@@ -1,0 +1,77 @@
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: white;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+#game-container {
+  background-color: #f5f5f5;
+  padding: 30px 40px;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  width: 320px;
+}
+
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+
+input[type="number"] {
+  padding: 8px;
+  width: 80%;
+  font-size: 16px;
+  border: 2px solid #4CAF50;
+  border-radius: 8px;
+  outline: none;
+  text-align: center;
+}
+
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 18px;
+  font-size: 14px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+
+#feedback,
+#attempts {
+  font-size: 16px;
+  color: #333;
+  margin-top: 10px;
+}
+
+
+#start-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+
+#restart-btn {
+  margin-top: 20px;
+}

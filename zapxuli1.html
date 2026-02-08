@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>პროდუქტები - TechStore</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="zapxuli1.css">
+</head>
+<body>
+     <!-- Header -->
+    <header>
+        <nav class="container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-laptop"></i>
+                TechStore
+            </a>
+            
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">მთავარი</a></li>
+                <li><a href="products.html" class="nav-link active">პროდუქტები</a></li>
+                <li><a href="index.html#categories" class="nav-link">კატეგორიები</a></li>
+                <li><a href="index.html#contact" class="nav-link">კონტაქტი</a></li>
+            </ul>
+
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="ძიება..." />
+                    <button class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+
+                <div class="cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </div>
+
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="index.html">მთავარი</a>
+                <span><i class="fas fa-chevron-right"></i></span>
+                <span>პროდუქტები</span>
+            </div>
+            <h1>ყველა პროდუქტი</h1>
+            <p>აღმოაჩინე ჩვენი ფართო ასორტიმენტი</p>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section">
+        <div class="container">
+            <div class="products-layout">
+                <!-- Sidebar -->
+                <aside class="filters-sidebar">
+                    <div class="filter-section">
+                        <h3>კატეგორიები</h3>
+                        <ul class="filter-list">
+                            <li>
+                                <label>
+                                    <input type="checkbox" class="filter-checkbox" data-category="all" checked>
+                                    <span class="checkmark"></span>
+                                    ყველა (24)
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input type="checkbox" class="filter-checkbox" data-category="laptops">
+                                    <span class="checkmark"></span>
+                                    ლეპტოპები (6)
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input type="checkbox" class="filter-checkbox" data-category="smartphones">
+                                    <span class="checkmark"></span>
+                                    სმარტფონები (8)
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input type="checkbox" class="filter-checkbox" data-category="accessories">
+                                    <span class="checkmark"></span>
+                                    აქსესუარები (6)
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input type="checkbox" class="filter-checkbox" data-category="gaming">
+                                    <span class="checkmark"></span>
+                                    გეიმინგი (4)
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="filter-section">
+                        <h3>ფასი</h3>
+                        <div class="price-range">
+                            <input type="range" min="0" max="5000" value="5000" class="price-slider" id="priceRange">
+                            <div class="price-display">
+                                <span>₾0 - ₾<span id="priceValue">5000</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <h3>ბრენდი</h3>
+                        <ul class="filter-list">
+                            <li>
+                                <label>
+                                    <input type="checkbox" class="filter-checkbox" data-brand="apple">
+                                    <span class="checkmark"></span>
+                                    Apple
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input type="checkbox" class="filter-checkbox" data-brand="samsung">
+                                    <span class="checkmark"></span>
+                                    Samsung
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input type="checkbox" class="filter-checkbox" data-brand="asus">
+                                    <span class="checkmark"></span>
+                                    ASUS
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input type="checkbox" class="filter-checkbox" data-brand="sony">
+                                    <span class="checkmark"></span>
+                                    Sony
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input type="checkbox" class="filter-checkbox" data-brand="dell">
+                                    <span class="checkmark"></span>
+                                    Dell
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button class="filter-reset">ფილტრების გასუფთავება</button>
+                </aside>
+
+                <!-- Products Grid -->
+                <main class="products-main">
+                    <div class="products-header">
+                        <div class="results-info">
+                            <span id="resultsCount">24</span> პროდუქტი ნაპოვნია
+                        </div>
+                        <div class="sort-controls">
+                            <select class="sort-select">
+                                <option value="default">დალაგება</option>
+                                <option value="price-low">ფასი: დაბლიდან მაღლამდე</option>
+                                <option value="price-high">ფასი: მაღლიდან დაბლამდე</option>
+                                <option value="name">სახელით (ა-ზ)</option>
+                                <option value="newest">ყველაზე ახალი</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="products-grid" id="productsGrid">
+                        <!-- Product 1 -->
+                        <div class="product-card" data-category="laptops" data-brand="apple" data-price="4999">
+                            <div class="product-image">
+                                <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop" alt="MacBook Pro 16">
+                                <div class="product-badge">ახალი</div>
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">MacBook Pro 16" M3 Pro</h3>
+                                <p class="product-description">მაღალი წარმადობის ლეპტოპი კრეატიულებისა და დეველოპერებისთვის</p>
+                                <div class="product-price">₾4,999</div>
+                                <div class="product-actions">
+                                    <button class="btn btn-primary" onclick="addToCart(event, 1)">კალათაში</button>
+                                    <button class="btn btn-outline" onclick="viewProduct(event, 1)">ნახვა</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 2 -->
+                        <div class="product-card" data-category="smartphones" data-brand="apple" data-price="3299">
+                            <div class="product-image">
+                                <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=300&fit=crop" alt="iPhone 15 Pro">
+                                <div class="product-badge">ხიტი</div>
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">iPhone 15 Pro Max 256GB</h3>
+                                <p class="product-description">უახლესი iPhone ტიტანის კორპუსითა და Pro კამერით</p>
+                                <div class="product-price">₾3,299</div>
+                                <div class="product-actions">
+                                    <button class="btn btn-primary" onclick="addToCart(event, 2)">კალათაში</button>
+                                    <button class="btn btn-outline" onclick="viewProduct(event, 2)">ნახვა</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 3 -->
+                        <div class="product-card" data-category="gaming" data-brand="asus" data-price="3599">
+                            <div class="product-image">
+                                <img src="https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=400&h=300&fit=crop" alt="Gaming Laptop">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">ASUS ROG Strix G15</h3>
+                                <p class="product-description">RTX 4070 გრაფიკითა და Ryzen 9 პროცესორით</p>
+                                <div class="product-price">₾3,599</div>
+                                <div class="product-actions">
+                                    <button class="btn btn-primary" onclick="addToCart(event, 3)">კალათაში</button>
+                                    <button class="btn btn-outline" onclick="viewProduct(event, 3)">ნახვა</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 4 -->
+                        <div class="product-card" data-category="accessories" data-brand="apple" data-price="599">
+                            <div class="product-image">
+                                <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=400&h=300&fit=crop" alt="AirPods Pro">
+                                <div class="product-badge">-20%</div>
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">AirPods Pro (2nd Gen)</h3>
+                                <p class="product-description">ბუნებრივი ხმის ხარისხით უკაბელო ყურსასმენები</p>
+                                <div class="product-price">₾599</div>
+                                <div class="product-actions">
+                                    <button class="btn btn-primary" onclick="addToCart(event, 4)">კალათაში</button>
+                                    <button class="btn btn-outline" onclick="viewProduct(event, 4)">ნახვა</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 5 -->
+                        <div class="product-card" data-category="gaming" data-brand="corsair" data-price="299">
+                            <div class="product-image">
+                                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=300&fit=crop" alt="Gaming Keyboard">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">Gaming Mechanical Keyboar
+     <script src="zapxuli1.js"></script>
+</html>                                   
+    

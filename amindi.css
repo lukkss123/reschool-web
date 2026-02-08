@@ -1,0 +1,89 @@
+/*
+ * style.css - CSS სტილი (მწვანე ფერი)
+ */
+body {
+    font-family: 'Arial', sans-serif;
+    /* მწვანე ფერი ფონისათვის */
+    background-color: #e6ffe6; 
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.weather-app-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 100, 0, 0.2); /* მწვანე ჩრდილი */
+    text-align: center;
+    width: 90%;
+    max-width: 450px;
+}
+
+h1 {
+    color: #008000; /* მუქი მწვანე */
+    margin-bottom: 25px;
+}
+
+.input-section {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#city-select, #search-button {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+#search-button {
+    /* წითელი ფერი ღილაკისთვის, როგორც ითხოვეთ */
+    background-color: #ff4d4d; 
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#search-button:hover {
+    background-color: #cc0000;
+}
+
+.weather-info {
+    border: 2px solid #008000; /* მუქი მწვანე ჩარჩო */
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    text-align: left;
+    min-height: 100px;
+}
+
+.weather-info p {
+    font-size: 18px;
+    margin: 5px 0;
+}
+
+.weather-info .temp {
+    font-size: 36px;
+    font-weight: bold;
+    color: #008000;
+}
+
+.loading-message {
+    /* თავიდან დამალულია */
+    display: none; 
+    margin-top: 20px;
+    font-size: 18px;
+    color: #888;
+}
+
+.error-message {
+    color: #cc0000; /* წითელი შეცდომის შეტყობინებისთვის */
+    font-weight: bold;
+}
